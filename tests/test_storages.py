@@ -5,14 +5,13 @@ import monitor.storages
 
 
 async def put_messages(storage: monitor.storages.Storage, N: int):
-    for i, log in enumerate(log_generators.generate_log()):
-        if i >= N:
-            break
+    for log in log_generators.generate_log(N):
         await storage.put(log)
 
 
 def test_storages(event_loop):
+    N = 1024
     storage = monitor.storages.Storage()
-    event_loop.run_until_complete(put_messages(storage, 100))
+    event_loop.run_until_complete(put_messages(storage, N))
 
-    assert storage.stats()
+    assert sum(storage.stats().values()) >= 0

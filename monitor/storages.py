@@ -8,7 +8,7 @@ class Storage(object):
         self.__section_counter = collections.Counter()
 
     async def put(self, msg: monitor.dataclasses.W3CHTTPAccessLog):
-        self.__section_counter.update((msg.request.uri.section, 1))
+        self.__section_counter.update((msg.request.uri.section,))
 
     def stats(self) -> collections.Counter:
         return self.__section_counter

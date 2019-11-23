@@ -12,10 +12,6 @@ LOG_LINES = [
 ]
 
 
-def test_http_access_log_parser():
-    assert LOG_LINES[0] == parsers.HTTPAccessLog()
-
-
 async def set_tasks(tasks: asyncio.Queue):
     for log_line in LOG_LINES:
         await tasks.put(log_line)
@@ -23,9 +19,12 @@ async def set_tasks(tasks: asyncio.Queue):
 
 def test_parser(event_loop):
     tasks = asyncio.Queue(maxsize=4, loop=event_loop)
-    solutions = asyncio.Queue(maxsize=1, loop=event_loop)
+    solutions = asyncio.Queue(maxsize=len(LOG_LINES), loop=event_loop)
 
-    _ = parsers.Parser(tasks, solutions, event_loop)
+    parser = parsers.Parser(tasks, solutions, event_loop)
+    parser_task = event_loop.create_task(parser())
+
     event_loop.run_until_complete(set_tasks(tasks))
+    parser_task.cancel()
 
     assert solutions.qsize() == len(LOG_LINES)

@@ -12,6 +12,7 @@ class Display(object):
                 msg = await self.__source_queue.get()
             except asyncio.CancelledError:
                 break
+            self.__source_queue.task_done()
 
     def __del__(self):
         self.__source_queue.task_done()

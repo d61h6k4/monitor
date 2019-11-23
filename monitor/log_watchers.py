@@ -1,6 +1,7 @@
 
 import asyncio
 import logging
+import os
 import pathlib
 
 from typing import Any
@@ -14,14 +15,17 @@ class LogWatcher(object):
         self.__loop = loop
         self.__events_sink = events_sink
         self.__source = open(log_file, 'r')
-        loop.add_reader(self.__source, self.read_next_lines)
+
+        self.read_next_lines()
+        self.__loop.add_reader(self.__source, self.read_next_lines)
 
     def read_next_lines(self):
-        try:
-            self.__events_sink.put_nowait(self.__source.readline().strip())
-        except asyncio.QueueFull:
-            _LOGGER.critical("Events queue is full")
+        for line in self.__source:
+            try:
+                self.__events_sink.put_nowait(line.strip())
+            except asyncio.QueueFull:
+                _LOGGER.critical("Events queue is full")
 
     def __del__(self):
         self.__loop.remove_reader(self.__source)
-        self.__source.close()
+        os.close(self.__source)

@@ -1,11 +1,17 @@
 
 import argparse
 import asyncio
+import datetime
+import logging
 import pathlib
 import signal
 
-import monitor.log_watchers as log_watchers
-import monitor.displays as displays
+import monitor.broadcasters
+import monitor.differs
+import monitor.displays
+import monitor.log_watchers
+import monitor.parsers
+import monitor.storages
 
 
 def parse_args():
@@ -30,22 +36,37 @@ def setup_signals_handlers(loop):
 
 
 def main():
+    logging.basicConfig(level=logging.DEBUG)
+
     args = parse_args()
     validate_log_path(args.log_path)
 
     loop = asyncio.get_event_loop()
+    loop.set_debug(True)
 
-    events_sink = asyncio.Queue(maxsize=1024, loop=loop)
-    _ = log_watchers.LogWatcher(args.log_path, events_sink, loop)
-    out_display = displays.Display(events_sink)
+    events = asyncio.Queue(maxsize=1024, loop=loop)
+    logs = asyncio.PriorityQueue(maxsize=1024, loop=loop)
+    _ = monitor.log_watchers.LogWatcher(args.log_path, events, loop)
+    parser = monitor.parsers.Parser(events, logs, loop)
 
-    display_task = loop.create_task(out_display())
+    storage = monitor.storages.Storage()
+    broadcaster = monitor.broadcasters.Broadcaster(logs)
+    broadcaster.register_consumer(storage)
+
+    out_display = monitor.displays.Display()
+    _ = monitor.differs.Differ(datetime.timedelta(seconds=10), storage, out_display, loop)
+
+    parser_task = loop.create_task(parser())
+    broadcaster_task = loop.create_task(broadcaster())
 
     setup_signals_handlers(loop)
     try:
         loop.run_forever()
+        for t in [t for t in [parser_task, broadcaster_task] if not (t.done() or t.cancelled())]:
+            t.cancel()
+            # give canceled tasks the last chance to run
+            loop.run_until_complete(t)
     finally:
-        display_task.cancel()
         loop.close()
 
 

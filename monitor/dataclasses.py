@@ -67,4 +67,4 @@ class W3CHTTPAccessLog(object):
                                     int(record['status']),
                                     int(record['size']))
         else:
-            raise ValueError('Cannot create W3CHTTPAccessLog. Invalid raw string {raw_string}.')
+            raise ValueError(f'Cannot create W3CHTTPAccessLog. Invalid raw string {raw_string}.')

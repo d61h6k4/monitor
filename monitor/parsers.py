@@ -1,8 +1,12 @@
 
 import asyncio
+import logging
 import monitor.dataclasses
 
 from typing import Any
+
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class Parser(object):
@@ -16,5 +20,13 @@ class Parser(object):
                 raw_string = await self.__input.get()
             except asyncio.CancelledError:
                 break
-            access_log = monitor.dataclasses.W3CHTTPAccessLog.from_string(raw_string)
-            await self.__outputs.put((access_log.date.timestamp(), access_log))
+            self.__input.task_done()
+            try:
+                access_log = monitor.dataclasses.W3CHTTPAccessLog.from_string(raw_string)
+            except ValueError as e:
+                _LOGGER.critical(e)
+                continue
+            try:
+                await self.__outputs.put((access_log.date.timestamp(), access_log))
+            except asyncio.CancelledError:
+                break

@@ -1,14 +1,21 @@
 
 import collections
+import datetime
+import monitor.broadcasters
 import monitor.dataclasses
 
+from typing import Tuple
 
-class Storage(object):
+
+Stats = collections.Counter
+
+
+class Storage(monitor.broadcasters.Consumer):
     def __init__(self):
-        self.__section_counter = collections.Counter()
+        self.__section_counter: Stats = collections.Counter()
 
-    async def put(self, msg: monitor.dataclasses.W3CHTTPAccessLog):
-        self.__section_counter.update((msg.request.uri.section,))
+    async def put(self, msg: Tuple[datetime.datetime, monitor.dataclasses.W3CHTTPAccessLog]):
+        self.__section_counter[msg[1].request.uri.section] += 1
 
-    def stats(self) -> collections.Counter:
-        return self.__section_counter
+    def stats(self) -> Stats:
+        return self.__section_counter.copy()

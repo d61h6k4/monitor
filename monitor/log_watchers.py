@@ -1,7 +1,6 @@
 
 import asyncio
 import logging
-import os
 import pathlib
 
 from typing import Any
@@ -28,4 +27,3 @@ class LogWatcher(object):
 
     def __del__(self):
         self.__loop.remove_reader(self.__source)
-        os.close(self.__source)

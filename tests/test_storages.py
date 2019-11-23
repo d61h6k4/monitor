@@ -1,11 +1,14 @@
 import random
+import log_generators
 
 import monitor.storages
 
 
 async def put_messages(storage: monitor.storages.Storage, N: int):
-    for _ in range(N):
-        await storage.put(random.randint(1, 10))
+    for i, log in enumerate(log_generators.generate_log()):
+        if i >= N:
+            break
+        await storage.put(log)
 
 
 def test_storages(event_loop):

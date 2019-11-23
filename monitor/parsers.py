@@ -10,6 +10,6 @@ class HTTPAccessLog(object):
     pass
 
 
-class ParserAsWorker(object):
+class Parser(object):
     def __init__(self, tasks: asyncio.Queue, solutions: asyncio.Queue, loop: Any):
         pass

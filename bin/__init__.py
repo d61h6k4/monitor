@@ -36,7 +36,7 @@ def main():
     loop = asyncio.get_event_loop()
 
     events_sink = asyncio.Queue(maxsize=1024, loop=loop)
-    log_watcher = log_watchers.LogWatcher(args.log_path, events_sink, loop)
+    _ = log_watchers.LogWatcher(args.log_path, events_sink, loop)
     out_display = displays.Display(events_sink)
 
     display_task = loop.create_task(out_display())

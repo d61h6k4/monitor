@@ -2,12 +2,11 @@
 import asyncio
 import pathlib
 import tempfile
-import random
 
 import monitor.log_watchers as log_watchers
 
 
-LOG_LINE='127.0.0.1 - james [09/May/2018:16:00:39 +0000] "GET /report HTTP/1.0" 200 123'
+LOG_LINE = '127.0.0.1 - james [09/May/2018:16:00:39 +0000] "GET /report HTTP/1.0" 200 123'
 
 
 async def write_logs(log_path: pathlib.Path, num_times: int):
@@ -26,7 +25,7 @@ def test_log_watcher(event_loop):
             for _ in range(N):
                 sink.write(f'{LOG_LINE}\n')
 
-        log_watcher = log_watchers.LogWatcher(log_path, events_sink, event_loop)
+        _ = log_watchers.LogWatcher(log_path, events_sink, event_loop)
         event_loop.run_until_complete(write_logs(log_path, N))
 
     assert not events_sink.empty()

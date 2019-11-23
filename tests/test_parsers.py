@@ -22,10 +22,10 @@ async def set_tasks(tasks: asyncio.Queue):
 
 
 def test_parser_block(event_loop):
-    tasks = asyncio.Queue(maxsize=1, loop=event_loop)
+    tasks = asyncio.Queue(maxsize=4, loop=event_loop)
     solutions = asyncio.Queue(maxsize=1, loop=event_loop)
 
-    parser = parsers.ParserAsWorker(tasks, solutions, event_loop)
+    _ = parsers.ParserAsWorker(tasks, solutions, event_loop)
     event_loop.run_until_complete(set_tasks(tasks))
 
     assert solutions.qsize() == len(LOG_LINES)

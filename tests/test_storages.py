@@ -1,6 +1,4 @@
-import random
 import log_generators
-
 import monitor.storages
 
 

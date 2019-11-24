@@ -9,7 +9,7 @@ from typing import List, Tuple
 
 class Consumer(abc.ABC):
     @abc.abstractmethod
-    async def put(self, msg: Tuple[datetime.datetime, monitor.dataclasses.W3CHTTPAccessLog]):
+    async def put(self, msg: Tuple[float, monitor.dataclasses.W3CHTTPAccessLog]):
         return
 
 

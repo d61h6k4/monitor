@@ -12,6 +12,7 @@ import monitor.displays
 import monitor.log_watchers
 import monitor.parsers
 import monitor.storages
+import monitor.triggers
 
 
 def parse_args():
@@ -36,24 +37,26 @@ def setup_signals_handlers(loop):
 
 
 def main():
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
 
     args = parse_args()
     validate_log_path(args.log_path)
 
     loop = asyncio.get_event_loop()
-    loop.set_debug(True)
 
     events = asyncio.Queue(maxsize=1024, loop=loop)
     logs = asyncio.PriorityQueue(maxsize=1024, loop=loop)
     _ = monitor.log_watchers.LogWatcher(args.log_path, events, loop)
     parser = monitor.parsers.Parser(events, logs, loop)
 
+    out_display = monitor.displays.Display()
+
     storage = monitor.storages.Storage()
+    average_load = monitor.triggers.AverageLoad(out_display, rps_threshold=2)
     broadcaster = monitor.broadcasters.Broadcaster(logs)
     broadcaster.register_consumer(storage)
+    broadcaster.register_consumer(average_load)
 
-    out_display = monitor.displays.Display()
     _ = monitor.differs.Differ(datetime.timedelta(seconds=10), storage, out_display, loop)
 
     parser_task = loop.create_task(parser())

@@ -4,7 +4,7 @@ import monitor.storages
 
 async def put_messages(storage: monitor.storages.Storage, N: int):
     for log in log_generators.generate_log(N):
-        await storage.put((log.date, log))
+        await storage.put((log.date.timestamp(), log))
 
 
 def test_storages(event_loop):

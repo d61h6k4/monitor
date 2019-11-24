@@ -13,8 +13,3 @@ def test_storages(event_loop):
     event_loop.run_until_complete(put_messages(storage, N))
 
     assert len(storage.stats().stats()) > 0
-
-def test_empty():
-    with open('access.log', 'w') as snk:
-        for log in log_generators.generate_log(10240, 8):
-            snk.write(f'{log}\n')

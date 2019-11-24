@@ -13,7 +13,7 @@ class DisplayMock(object):
 
 async def put_messages(average_load: monitor.triggers.AverageLoad, N: int):
     for log in log_generators.generate_log(N, speed=9):
-        await average_load.put((log.date, log))
+        await average_load.put((log.date.timestamp(), log))
 
 
 def test_storages_get_alerts(event_loop):

@@ -15,7 +15,6 @@ SECTIONS = ['books', 'photos', 'movies', 'users']
 
 def generate_log(approx_n: int = 100, speed: int = 5) -> Iterator[monitor.dataclasses.W3CHTTPAccessLog]:
     log_per_second_num = scipy.stats.poisson.rvs(speed, size=int(approx_n / speed))
-    print(log_per_second_num)
     next_date = datetime.datetime.now()
 
     for log_num in log_per_second_num:

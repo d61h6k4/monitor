@@ -67,9 +67,9 @@ class AverageLoad(monitor.broadcasters.Consumer):
                 self.__upper_threshold = True
 
                 msg = f'High traffic generated an alert - hits = {int(self.__loads)}, triggered at {int(current_dt)}'
-                self.__display.push(msg, color=monitor.displays.RED)
+                self.__display.push(msg, tag=monitor.displays.Tags.ALERT)
             elif self.__upper_threshold:
-                self.__display.push('Alert recovered', color=monitor.displays.GREEN)
+                self.__display.push(f'Alert recovered at {int(current_dt)}', tag=monitor.displays.Tags.NORMAL)
                 self.__upper_threshold = False
 
     def stats(self) -> int:

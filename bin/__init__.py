@@ -19,6 +19,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='HTTP log monitoring console program')
 
     parser.add_argument('--log-path', help='specify path to log file', default='/tmp/access.log', type=pathlib.Path)
+    parser.add_argument('--rps-threshold', help='specify high traffic threshold', default=10, type=int)
 
     return parser.parse_args()
 
@@ -37,7 +38,7 @@ def setup_signals_handlers(loop):
 
 
 def main():
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.CRITICAL)
 
     args = parse_args()
     validate_log_path(args.log_path)
@@ -52,7 +53,7 @@ def main():
     out_display = monitor.displays.Display()
 
     storage = monitor.storages.Storage()
-    average_load = monitor.triggers.AverageLoad(out_display, rps_threshold=2)
+    average_load = monitor.triggers.AverageLoad(out_display, rps_threshold=args.rps_threshold)
     broadcaster = monitor.broadcasters.Broadcaster(logs)
     broadcaster.register_consumer(storage)
     broadcaster.register_consumer(average_load)

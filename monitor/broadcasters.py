@@ -26,7 +26,6 @@ class Broadcaster(object):
                 msg = await self.__messages.get()
             except asyncio.CancelledError:
                 break
-            self.__messages.task_done()
 
             for consumer in self.__consumers:
                 try:

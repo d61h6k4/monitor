@@ -20,7 +20,6 @@ class Parser(object):
                 raw_string = await self.__input.get()
             except asyncio.CancelledError:
                 break
-            self.__input.task_done()
             try:
                 access_log = monitor.dataclasses.W3CHTTPAccessLog.from_string(raw_string)
             except ValueError as e:

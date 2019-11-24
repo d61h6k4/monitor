@@ -23,6 +23,6 @@ class Differ(object):
     def snapshot(self):
         diff_stats = self.__storage.stats()
         diff_stats.subtract(self.__prev_stats)
-        self.__display.push(diff_stats)
+        self.__display.push(diff_stats, tag=monitor.displays.Tags.STATS)
         self.__prev_stats.update(diff_stats)
         self.__loop.call_later(self.__diff.seconds, self.snapshot)

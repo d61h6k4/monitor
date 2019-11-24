@@ -70,6 +70,9 @@ class W3CHTTPAccessLog(object):
     def __repr__(self):
         return self.__str__()
 
+    def __lt__(self, other):
+        return self.date < other.date
+
     @staticmethod
     def from_string(raw_string: str) -> 'W3CHTTPAccessLog':
         matched = PATTERN.match(raw_string)

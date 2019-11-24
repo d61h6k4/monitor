@@ -9,6 +9,9 @@ class URI(object):
     section: str
     page: str
 
+    def __str__(self):
+        return self.page
+
     @staticmethod
     def from_string(raw_string: str) -> 'URI':
         record = raw_string.split('/')
@@ -22,6 +25,9 @@ class Request(object):
     method: str
     uri: URI
     version: str
+
+    def __str__(self):
+        return f'{self.method} {str(self.uri)} {self.version}'
 
     @staticmethod
     def from_string(raw_string: str) -> 'Request':
@@ -51,6 +57,18 @@ class W3CHTTPAccessLog(object):
     request: Request
     status: int
     size: int
+
+    def __str__(self):
+        return ' '.join([self.remotehost,
+                         self.rfc931,
+                         self.authuser,
+                         f'[{self.date.strftime("%d/%b/%Y:%H:%M:%S %z")}]',
+                         f'"{self.request}"',
+                         str(self.status),
+                         str(self.size)])
+
+    def __repr__(self):
+        return self.__str__()
 
     @staticmethod
     def from_string(raw_string: str) -> 'W3CHTTPAccessLog':

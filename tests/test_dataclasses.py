@@ -13,3 +13,8 @@ LOG_LINES = [
 
 def test_http_access_log_parser():
     assert monitor.dataclasses.W3CHTTPAccessLog.from_string(LOG_LINES[0]) == monitor.dataclasses.W3CHTTPAccessLog('127.0.0.1', '-', 'james', datetime.datetime(2018, 5, 9, 16, 00, 39, tzinfo=datetime.timezone.utc), monitor.dataclasses.Request("GET", monitor.dataclasses.URI("report", "/report"), "HTTP/1.0"), 200, 123)
+
+
+def test_encode_decode():
+    for log_line in LOG_LINES:
+        assert str(monitor.dataclasses.W3CHTTPAccessLog.from_string(log_line)) == log_line
